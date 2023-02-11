@@ -51,21 +51,24 @@ class RingBufferTest {
     @ParameterizedTest
     @MethodSource("provideDifferentSizes")
     void testEnqueue(int referenceSize, String... bufferElements) {
+        Iterator<String> iterator = ringBuffer.iterator();
         for (int i = 0; i < bufferElements.length; i++) {
             ringBuffer.enqueue(bufferElements[i]);
-            if (i > RING_BUFFER_CAPACITY) {
+            if (i >= RING_BUFFER_CAPACITY) {
                 // if we reach the max capacity of the buffer the first element gets overridden
                 assertEquals(bufferElements[i], ringBuffer.peek());
             } else {
-                assertEquals(bufferElements[i], getLastBufferElement());
+                assertEquals(bufferElements[i], iterator.next());
             }
         }
     }
 
     @Test
     void testPeek() {
-        // TODO: implement this test yourself
-        fail("Not yet implemented");
+        setUpBuffer("1", "2", "3");
+        assertEquals("1", ringBuffer.peek());
+        ringBuffer.enqueue("1");
+        assertEquals("1", ringBuffer.peek());
     }
 
     private static Stream<Arguments> provideDifferentSizes() {
@@ -97,20 +100,4 @@ class RingBufferTest {
             ringBuffer.enqueue(element);
         }
     }
-
-    private String getLastBufferElement() {
-        String element = "";
-        Iterator<String> iterator = ringBuffer.iterator();
-        String nextElement;
-        while (iterator.hasNext()) {
-
-            nextElement = iterator.next();
-            if (nextElement != null) {
-                element = nextElement;
-            }
-        }
-
-        return element;
-    }
-
 }
